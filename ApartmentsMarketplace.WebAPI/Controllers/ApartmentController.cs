@@ -15,6 +15,12 @@ namespace ApartmentMarketplace.WebAPI.Controllers
             _service = service;
         }
 
+        /// <summary>
+        /// Get available apartments (optionally filtered by price and rooms)
+        /// </summary>
+        /// <param name="price"></param>
+        /// <param name="rooms"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Apartment>>> GetApartments(string? price, int? rooms)
         {
@@ -28,6 +34,11 @@ namespace ApartmentMarketplace.WebAPI.Controllers
             return Ok(apartments);
         }
 
+        /// <summary>
+        /// Get apartment by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Apartment>> GetApartment(string id)
         {
@@ -41,6 +52,11 @@ namespace ApartmentMarketplace.WebAPI.Controllers
             return Ok(apartment);
         }
 
+        /// <summary>
+        /// Create a new apartment
+        /// </summary>
+        /// <param name="apartment"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> AddApartment(Apartment apartment)
         {
@@ -49,6 +65,12 @@ namespace ApartmentMarketplace.WebAPI.Controllers
             return CreatedAtAction(nameof(GetApartment), new { id = apartment.Id }, apartment);
         }
 
+        /// <summary>
+        /// Update an existing apartment by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="apartment"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateApartment(string id, Apartment apartment)
         {
@@ -62,6 +84,11 @@ namespace ApartmentMarketplace.WebAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Delete an apartment by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteApartment(string id)
         {
