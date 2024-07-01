@@ -4,7 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Apartment } from '../models/apartment.model';
 import { AsyncPipe } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +23,15 @@ export class AppComponent {
     price: new FormControl<number>(0),
   });
 
-  apartments$ = this.getContacts();
+  apartments$ = this.getApartments();
+  sortedApartments: Apartment[] = [];
+  roomsFilter: number | undefined;
+
+  ngOnInit() {
+    this.apartments$.subscribe(apartments => {
+      this.sortedApartments = apartments;
+    });
+  }
 
   onFormSubmit() {
     const addApartmentRequest = {
@@ -31,12 +39,12 @@ export class AppComponent {
       rooms: this.apartmentsForm.value.rooms,
       description: this.apartmentsForm.value.description,
       price: this.apartmentsForm.value.price
-    }
+    };
 
     this.http.post("https://localhost:7085/apartments", addApartmentRequest).subscribe({
       next: (value) => {
         console.log(value);
-        this.apartments$ = this.getContacts();
+        this.apartments$ = this.getApartments();
         this.apartmentsForm.reset();
       }
     });
@@ -46,12 +54,26 @@ export class AppComponent {
     this.http.delete(`https://localhost:7085/apartments/${id}`).subscribe({
       next: () => {
         alert("Apartment deleted successfully");
-        this.apartments$ = this.getContacts();
+        this.apartments$ = this.getApartments();
       }
     });
   }
 
-  private getContacts(): Observable<Apartment[]> {
-      return this.http.get<Apartment[]>("https://localhost:7085/apartments");
+  private getApartments(): Observable<Apartment[]> {
+    return this.http.get<Apartment[]>("https://localhost:7085/apartments");
+  }
+
+  onSortChange(event: Event) {
+    const sortValue = (event.target as HTMLSelectElement).value;
+    this.apartments$.subscribe(apartments => {
+      if (sortValue === 'default') {
+        this.sortedApartments = apartments;
+      }
+      if (sortValue === 'price-asc') {
+        this.sortedApartments = apartments.sort((a, b) => a.price - b.price);
+      } else if (sortValue === 'price-desc') {
+        this.sortedApartments = apartments.sort((a, b) => b.price - a.price);
+      }
+    });
   }
 }

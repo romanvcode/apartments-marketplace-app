@@ -1,8 +1,8 @@
 export interface Apartment {
-  id: string | null;
+  id: string;
   rooms: number;
-  name: string | null;
-  description: string | null;
+  name: string;
+  description: string;
   price: number;
 }
 
