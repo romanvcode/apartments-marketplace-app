@@ -29,6 +29,8 @@ var app = builder.Build();
 app.UseHsts();
 app.UseHttpsRedirection();
 
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
 app.UseSwagger();
 app.UseSwaggerUI();
 

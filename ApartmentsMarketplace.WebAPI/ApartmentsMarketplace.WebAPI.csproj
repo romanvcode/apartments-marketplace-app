@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\apartments.web\src\models\apartment.model.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Controllers\" />
   </ItemGroup>
 
@@ -23,6 +27,10 @@
   <ItemGroup>
     <ProjectReference Include="..\ApartmentsMarketplace.Core\ApartmentsMarketplace.Core.csproj" />
     <ProjectReference Include="..\ApartmentsMarketplace.Infrastructure\ApartmentsMarketplace.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\apartments.web\src\models\apartment.model.ts" />
   </ItemGroup>
 
 </Project>

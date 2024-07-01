@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ApartmentsAngularApp": {
+    "apartments.web": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/apartments-angular-app",
+            "outputPath": "dist/apartments.web",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -29,12 +29,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -64,10 +59,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ApartmentsAngularApp:build:production"
+              "buildTarget": "apartments.web:build:production"
             },
             "development": {
-              "buildTarget": "ApartmentsAngularApp:build:development"
+              "buildTarget": "apartments.web:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -99,6 +94,6 @@
     }
   },
   "cli": {
-    "analytics": "45eac4d6-88d2-4d6c-966c-4785e9811c3a"
+    "analytics": "d648f6ab-1969-4c4b-afdb-726fccc79685"
   }
 }
