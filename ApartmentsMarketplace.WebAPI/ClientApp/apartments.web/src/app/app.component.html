@@ -42,7 +42,7 @@
 
         <div class="mt-2">
           <label for="description" class="font-bold">Description</label>
-          <input type="text" class="w-full p-2 border-2 rounded-sm mt-2" formControlName="description" />
+          <textarea  type="text" class="w-full p-2 border-2 rounded-sm mt-2" formControlName="description"></textarea>
           @if (apartmentsForm.controls.description.invalid && (apartmentsForm.controls.description.dirty || apartmentsForm.controls.description.touched)) {
           @if (apartmentsForm.controls.description.errors?.['maxlength']){
           <div class="text-red-500">
