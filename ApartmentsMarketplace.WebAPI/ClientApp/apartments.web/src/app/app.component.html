@@ -4,31 +4,69 @@
   </h1>
 
   <div class="flex w-full justify-center gap-4">
-    <div class="w-[50%]">
+    <div class="w-[20%]">
       <form (ngSubmit)="onFormSubmit()" [formGroup]="apartmentsForm" class="px-4">
-        <div class="flex w-full justify-center mb-4">
-          <label for="filterRooms" class="font-bold">Filter by Rooms:</label>
-          <input id="filterRooms" type="number" class="w-24 p-2 border-2 rounded-sm ml-2" [(ngModel)]="roomsFilter" placeholder="Number of rooms" />
-        </div>
-
         <div class="mt-2">
           <label for="name" class="font-bold">Name</label>
           <input type="text" class="w-full p-2 border-2 rounded-sm mt-2" formControlName="name" />
+          @if (apartmentsForm.controls.name.invalid && (apartmentsForm.controls.name.dirty || apartmentsForm.controls.name.touched)) {
+          @if (apartmentsForm.controls.name.errors?.['required']){
+          <div class="text-red-500">
+            Name is required.
+          </div>
+          }
+          @if (apartmentsForm.controls.name.errors?.['maxlength']){
+          <div class="text-red-500">
+            Lenght should be less than 100 characters.
+          </div>
+          }
+          }
         </div>
 
         <div class="mt-2">
           <label for="rooms" class="font-bold">Rooms</label>
           <input type="number" class="w-full p-2 border-2 rounded-sm mt-2" formControlName="rooms" />
+          @if (apartmentsForm.controls.rooms.invalid && (apartmentsForm.controls.rooms.dirty || apartmentsForm.controls.rooms.touched)) {
+          @if (apartmentsForm.controls.rooms.errors?.['required']){
+          <div class="text-red-500">
+            Number of rooms is required.
+          </div>
+          }
+          @if (apartmentsForm.controls.rooms.errors?.['min']){
+          <div class="text-red-500">
+            Minimum value is 1.
+          </div>
+          }
+          }
         </div>
 
         <div class="mt-2">
           <label for="description" class="font-bold">Description</label>
           <input type="text" class="w-full p-2 border-2 rounded-sm mt-2" formControlName="description" />
+          @if (apartmentsForm.controls.description.invalid && (apartmentsForm.controls.description.dirty || apartmentsForm.controls.description.touched)) {
+          @if (apartmentsForm.controls.description.errors?.['maxlength']){
+          <div class="text-red-500">
+            Lenght should be less than 1000 characters.
+          </div>
+          }
+          }
         </div>
 
         <div class="mt-2">
           <label for="price" class="font-bold">Price</label>
           <input type="number" class="w-full p-2 border-2 rounded-sm mt-2" formControlName="price" />
+          @if (apartmentsForm.controls.price.invalid && (apartmentsForm.controls.price.dirty || apartmentsForm.controls.price.touched)) {
+          @if (apartmentsForm.controls.price.errors?.['required']){
+          <div class="text-red-500">
+            Price is required.
+          </div>
+          }
+          @if (apartmentsForm.controls.price.errors?.['min']){
+          <div class="text-red-500">
+            Minimum value is 1.
+          </div>
+          }
+          }
         </div>
 
         <div class="mt-2">
@@ -37,14 +75,26 @@
       </form>
     </div>
 
-    <div class="w-[50%] overflow-auto">
+    <div class="w-[40%] overflow-auto">
       @if (apartments$ | async; as apartments) {
       @if (apartments.length > 0) {
-      <div class="flex items-center justify-between align-center mt-4 w-full gap-4">
-        <h2>AVAILABLE APARTMENTS: {{ apartments.length }}</h2>
+      <div class="flex flex-row items-center justify-center gap-4">
+        <h2 class="basis-1/3"><b>AVAILABLE APARTMENTS: {{ sortedApartments.length }}</b></h2>
 
-        <div class="mb-4 flex">
-          <label for="sort" class="font-bold">Sort by:</label>
+        <div class="basis-1/4 flex w-full justify-center items-center mb-4 gap-4">
+          <label for="filter" class="font-bold">Filter:</label>
+          <select id="filter" (change)="onFilterChange($event)" class="w-[50%] p-2 border-2 rounded-sm mt-2">
+            <option value="default">-</option>
+            <option value="1">1 room</option>
+            <option value="2">2 rooms</option>
+            <option value="3">3 rooms</option>
+            <option value="4">4 rooms</option>
+            <option value="5">5 rooms</option>
+          </select>
+        </div>
+
+        <div class="basis-1/3 flex w-full justify-center items-center mb-4 gap-4">
+          <label for="sort" class="font-bold">Sort:</label>
           <select id="sort" (change)="onSortChange($event)" class="w-full p-2 border-2 rounded-sm mt-2">
             <option value="default">-</option>
             <option value="price-asc">Price - lowest to highest</option>
@@ -52,6 +102,7 @@
           </select>
         </div>
       </div>
+
       <ul>
         @for (item of sortedApartments; track $index) {
         <li class="p-2 bg-slate-100 border-b-2 border-slate-200">

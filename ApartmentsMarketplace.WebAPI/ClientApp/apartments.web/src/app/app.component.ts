@@ -1,7 +1,7 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Apartment } from '../models/apartment.model';
 import { AsyncPipe } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,21 +16,25 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 export class AppComponent {
   http = inject(HttpClient);
 
-  apartmentsForm = new FormGroup({
-    name: new FormControl<string>(''),
-    rooms: new FormControl<number>(0),
-    description: new FormControl<string>(''),
-    price: new FormControl<number>(0),
-  });
-
   apartments$ = this.getApartments();
   sortedApartments: Apartment[] = [];
   roomsFilter: number | undefined;
 
-  ngOnInit() {
+  apartmentsForm = new FormGroup({
+    name: new FormControl<string>('', [Validators.required, Validators.maxLength(99)]),
+    rooms: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
+    description: new FormControl<string>('', Validators.maxLength(999)),
+    price: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
+  });
+
+  loadApartments() {
     this.apartments$.subscribe(apartments => {
       this.sortedApartments = apartments;
     });
+  }
+
+  ngOnInit() {
+    this.loadApartments();
   }
 
   onFormSubmit() {
@@ -45,6 +49,7 @@ export class AppComponent {
       next: (value) => {
         console.log(value);
         this.apartments$ = this.getApartments();
+        this.loadApartments();
         this.apartmentsForm.reset();
       }
     });
@@ -55,6 +60,7 @@ export class AppComponent {
       next: () => {
         alert("Apartment deleted successfully");
         this.apartments$ = this.getApartments();
+        this.loadApartments();
       }
     });
   }
@@ -73,6 +79,18 @@ export class AppComponent {
         this.sortedApartments = apartments.sort((a, b) => a.price - b.price);
       } else if (sortValue === 'price-desc') {
         this.sortedApartments = apartments.sort((a, b) => b.price - a.price);
+      }
+    });
+  }
+
+  onFilterChange(event: Event) {
+    const filterValue = (event.target as HTMLSelectElement).value;
+    this.apartments$.subscribe(apartments => {
+      if (filterValue === 'default') {
+        this.sortedApartments = apartments;
+      }
+      else {
+        this.sortedApartments = apartments.filter(a => a.rooms.toString() == filterValue);
       }
     });
   }
