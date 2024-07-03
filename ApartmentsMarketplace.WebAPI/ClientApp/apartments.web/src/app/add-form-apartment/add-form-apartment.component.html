@@ -1,0 +1,82 @@
+<div>
+  <form (ngSubmit)="onFormSubmit()" [formGroup]="apartmentsForm" class="px-4">
+    <div class="mt-2">
+      <label for="name" class="font-bold">Name</label>
+      <input
+        type="text"
+        class="w-full p-2 border-2 rounded-sm mt-2"
+        formControlName="name"
+      />
+      @if (apartmentsForm.controls.name.invalid &&
+      (apartmentsForm.controls.name.dirty ||
+      apartmentsForm.controls.name.touched)) { @if
+      (apartmentsForm.controls.name.errors?.['required']){
+      <div class="text-red-500">Name is required.</div>
+      } @if (apartmentsForm.controls.name.errors?.['maxlength']){
+      <div class="text-red-500">Lenght should be less than 100 characters.</div>
+      } }
+    </div>
+
+    <div class="mt-2">
+      <label for="rooms" class="font-bold">Rooms</label>
+      <input
+        type="number"
+        class="w-full p-2 border-2 rounded-sm mt-2"
+        formControlName="rooms"
+      />
+      @if (apartmentsForm.controls.rooms.invalid &&
+      (apartmentsForm.controls.rooms.dirty ||
+      apartmentsForm.controls.rooms.touched)) { @if
+      (apartmentsForm.controls.rooms.errors?.['required']){
+      <div class="text-red-500">Number of rooms is required.</div>
+      } @if (apartmentsForm.controls.rooms.errors?.['min']){
+      <div class="text-red-500">Minimum value is 1.</div>
+      } @if (apartmentsForm.controls.rooms.errors?.['pattern']) {
+      <div class="text-red-500">Only integers are allowed.</div>
+      } }
+    </div>
+
+    <div class="mt-2">
+      <label for="description" class="font-bold">Description</label>
+      <textarea
+        type="text"
+        class="w-full p-2 border-2 rounded-sm mt-2"
+        formControlName="description"
+      ></textarea>
+      @if (apartmentsForm.controls.description.invalid &&
+      (apartmentsForm.controls.description.dirty ||
+      apartmentsForm.controls.description.touched)) { @if
+      (apartmentsForm.controls.description.errors?.['maxlength']){
+      <div class="text-red-500">
+        Lenght should be less than 1000 characters.
+      </div>
+      } }
+    </div>
+
+    <div class="mt-2">
+      <label for="price" class="font-bold">Price</label>
+      <input
+        type="number"
+        class="w-full p-2 border-2 rounded-sm mt-2"
+        formControlName="price"
+      />
+      @if (apartmentsForm.controls.price.invalid &&
+      (apartmentsForm.controls.price.dirty ||
+      apartmentsForm.controls.price.touched)) { @if
+      (apartmentsForm.controls.price.errors?.['required']){
+      <div class="text-red-500">Price is required.</div>
+      } @if (apartmentsForm.controls.price.errors?.['min']){
+      <div class="text-red-500">Minimum value is 1.</div>
+      } }
+    </div>
+
+    <div class="mt-2">
+      <button
+        type="submit"
+        class="bg-slate-800 text-white px-4 py-2 rounded-sm w-full"
+      >
+        Add
+      </button>
+    </div>
+  </form>
+</div>

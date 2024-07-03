@@ -1,67 +1,43 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Apartment } from '../models/apartment.model';
 import { AsyncPipe } from '@angular/common';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AddFormApartmentComponent } from './add-form-apartment/add-form-apartment.component';
+import { ApartmentComponent } from './apartment/apartment.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
   imports: [
     RouterOutlet,
-    HttpClientModule,
     AsyncPipe,
     FormsModule,
     ReactiveFormsModule,
+    AddFormApartmentComponent,
+    ApartmentComponent,
   ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
 })
 export class AppComponent {
   http = inject(HttpClient);
 
+  price: string = '';
+  rooms: string = '';
+
   apartments$ = this.getApartments();
-  sortedApartments: Apartment[] = [];
+  apartments: Apartment[] = [];
   roomsFilter: number | undefined;
 
-  apartmentsForm = new FormGroup({
-    name: new FormControl<string>('', [
-      Validators.required,
-      Validators.maxLength(99),
-    ]),
-    rooms: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(1),
-      Validators.pattern('^[0-9]*$'),
-    ]),
-    description: new FormControl<string>('', Validators.maxLength(999)),
-    price: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
-  });
-
-  loadApartments() {
-    this.apartments$.subscribe((apartments) => {
-      this.sortedApartments = apartments;
-    });
-  }
-
-  ngOnInit() {
-    this.loadApartments();
-  }
-
-  onFormSubmit() {
+  onFormSubmit(form: FormGroup) {
     const addApartmentRequest = {
-      name: this.apartmentsForm.value.name,
-      rooms: this.apartmentsForm.value.rooms,
-      description: this.apartmentsForm.value.description,
-      price: this.apartmentsForm.value.price,
+      name: form.value.name,
+      rooms: form.value.rooms,
+      description: form.value.description,
+      price: form.value.price,
     };
 
     this.http
@@ -71,9 +47,20 @@ export class AppComponent {
           console.log(value);
           this.apartments$ = this.getApartments();
           this.loadApartments();
-          this.apartmentsForm.reset();
+          form.reset();
         },
       });
+  }
+
+  loadApartments() {
+    this.apartments$ = this.getApartments();
+    this.apartments$.subscribe((apartments) => {
+      this.apartments = apartments;
+    });
+  }
+
+  ngOnInit() {
+    this.loadApartments();
   }
 
   onDelete(id: string) {
@@ -87,33 +74,35 @@ export class AppComponent {
   }
 
   private getApartments(): Observable<Apartment[]> {
-    return this.http.get<Apartment[]>('https://localhost:7085/apartments');
+    return this.http.get<Apartment[]>(
+      `https://localhost:7085/apartments?price=${this.price}&rooms=${this.rooms}`
+    );
   }
 
   onSortChange(event: Event) {
     const sortValue = (event.target as HTMLSelectElement).value;
-    this.apartments$.subscribe((apartments) => {
+    this.apartments$.subscribe(() => {
       if (sortValue === 'default') {
-        this.sortedApartments = apartments;
+        this.price = '';
       }
       if (sortValue === 'price-asc') {
-        this.sortedApartments = apartments.sort((a, b) => a.price - b.price);
+        this.price = 'asc';
       } else if (sortValue === 'price-desc') {
-        this.sortedApartments = apartments.sort((a, b) => b.price - a.price);
+        this.price = 'desc';
       }
+      this.loadApartments();
     });
   }
 
   onFilterChange(event: Event) {
     const filterValue = (event.target as HTMLSelectElement).value;
-    this.apartments$.subscribe((apartments) => {
+    this.apartments$.subscribe(() => {
       if (filterValue === 'default') {
-        this.sortedApartments = apartments;
+        this.rooms = '';
       } else {
-        this.sortedApartments = apartments.filter(
-          (a) => a.rooms.toString() == filterValue
-        );
+        this.rooms = filterValue;
       }
+      this.loadApartments();
     });
   }
 }
